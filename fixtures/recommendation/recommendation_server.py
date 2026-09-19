@@ -21,6 +21,7 @@ def get_recommendations(product_ids: list[str], max_results: int = 5) -> list[st
     global _requests
     with _lock:
         _seen_product_ids.extend(product_ids)
+        del _seen_product_ids[:-500]
         _requests += 1
     catalog = [f"PRODUCT-{i}" for i in range(20)]
     chosen = set(product_ids)
