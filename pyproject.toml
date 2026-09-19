@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiops-agent-demo"
+version = "0.1.0"
+description = "Local Docker AIOps diagnosis and remediation demo"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+claude = ["claude-agent-sdk>=0.2.140"]
+test = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["aiops*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

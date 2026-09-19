@@ -1,0 +1,36 @@
+name: aiopsagent
+services:
+  recommendation:
+    build: ./fixtures/recommendation
+    container_name: aiops-recommendation
+    mem_limit: 128m
+    restart: unless-stopped
+    environment:
+      LEAK_ENABLED: "1"
+      LEAK_BATCH: "200"
+      LEAK_INTERVAL_SECONDS: "1"
+    ports:
+      - "127.0.0.1:8088:8080"
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: aiops-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on:
+      - recommendation
+  ollama:
+    profiles: ["local-agent"]
+    image: ollama/ollama:latest
+    container_name: aiops-ollama
+    gpus: all
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+
+volumes:
+  ollama-data:

@@ -1,0 +1,33 @@
+name: repair-gate
+
+on:
+  pull_request:
+    paths:
+      - "fixtures/recommendation/**"
+      - ".github/workflows/repair-gate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  repair-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Run Agent tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Run recommendation regression test
+        working-directory: fixtures/recommendation
+        run: python -m unittest -v test_recommendation
+
+      - name: Build repaired recommendation image
+        working-directory: fixtures/recommendation
+        run: docker build -t aiops-recommendation-pr-check .
